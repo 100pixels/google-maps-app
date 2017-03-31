@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">GoogleMaps</string>
+    <string name="title_activity_maps">Map</string>
+
+    <string name="network_state_dialog_title">
+        Debe conectarse a una red para continuar usando la aplicación
+    </string>
+        <string name="network_state_dialog_positive_button">
+        Conectar
+    </string>
+    <string name="network_state_dialog_negative_button">
+        Salir
+    </string>
+    <string name="title_activity_demo_maps">Google Maps</string>
+    <string name="title_activity_marker_and_polyline">Marker and Polyline</string>
+</resources>
