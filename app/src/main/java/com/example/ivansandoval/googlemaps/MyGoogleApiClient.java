@@ -27,7 +27,6 @@ public class MyGoogleApiClient  implements
     public MyGoogleApiClient(Context context) {
         this.context = context;
         buildApiClient();
-
     }
 
     public GoogleApiClient getClient(){
@@ -59,7 +58,6 @@ public class MyGoogleApiClient  implements
 
     // This method receive unresolvable connection errors
     @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d(LOG_TAG,"onConnectionFailed");
-    }
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {Log.d(LOG_TAG,"onConnectionFailed");}
+
 }

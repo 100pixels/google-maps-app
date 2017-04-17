@@ -27,7 +27,8 @@ public class JsonResponseParser extends AsyncTask<String, Integer, List<List<Has
     protected List<List<HashMap<String,String>>> doInBackground(String... httpResponse){
         List<List<HashMap<String,String>>> routes=null;
         try{
-            routes=new DataParser().parse(new JSONObject(httpResponse[0]));
+            DataParser parser = new DataParser();
+            routes=parser.parse(new JSONObject(httpResponse[0]));
         }catch(Exception e){
             e.printStackTrace();
         }

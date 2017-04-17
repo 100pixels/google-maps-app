@@ -33,6 +33,7 @@ import java.util.List;
 
 import cenidet.cc.publictransit.dto.Stop;
 import cenidet.cc.publictransit.ws.DirectionsApiResponse;
+import cenidet.cc.publictransit.ws.FetchUrl;
 import cenidet.cc.publictransit.ws.JsonResponseParser;
 
 public class MyGoogleMap implements
@@ -110,12 +111,13 @@ public class MyGoogleMap implements
 
 
     public void drawPublicTransitRoute(){
-        String url = "http://10.0.0.6:8085/PublicTransitWS/publictransit/getStopsByJourneyId/2";
+        //10.175.121.113
+        String url = "http://10.0.0.6:8085/PublicTransitWS/publictransit/getStopsByJourneyId/3";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
             @Override
             public void onResponse(String response){
-                Type type = new TypeToken<List<Stop>>() {}.getType();
+                Type type = new TypeToken<ArrayList<Stop>>() {}.getType();
                 ArrayList<Stop> stops = gson.fromJson(response, type);
                 drawRoute(stops);
                 Log.i(LOG_TAG, ""+stops);
@@ -123,7 +125,6 @@ public class MyGoogleMap implements
         }, new Response.ErrorListener(){
             @Override
             public void onErrorResponse(VolleyError error){
-                //lblResopnse.setText(error.getMessage());
                 Log.i(LOG_TAG, error.getMessage().toString());
             }
         });
@@ -142,13 +143,16 @@ public class MyGoogleMap implements
     private void drawRouteBetweenTwoStops(Stop stop1, Stop stop2) {
         UrlRequest urlRequest = new UrlRequest(stop1, stop2);
 
+        //FetchUrl fetchUrl = new FetchUrl(map);
+        //fetchUrl.execute(urlRequest.toString());
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, urlRequest.toString(), new Response.Listener<String>(){
             @Override
             public void onResponse(String response){
-                //DirectionsApiResponse apiResponse = new DirectionsApiResponse(response);
-                //map.addPolyline(apiResponse.getPolyline());
+                DirectionsApiResponse apiResponse = new DirectionsApiResponse(response);
+                map.addPolyline(apiResponse.getPolyline());
                 //Log.i(LOG_TAG, apiResponse.toString());
-                new JsonResponseParser(map).execute(response);
+                //new JsonResponseParser(map).execute(response);
             }
         }, new Response.ErrorListener(){
             @Override
@@ -164,7 +168,7 @@ public class MyGoogleMap implements
     public void drawMarker(Stop stop){
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(stop.getLatitude(), stop.getLongitude()))
-                .title(stop.getDescription()));
+                .title(stop.getStopId()+".- "+ stop.getLatitude()+" , "+ stop.getLongitude()));
     }
 }
 

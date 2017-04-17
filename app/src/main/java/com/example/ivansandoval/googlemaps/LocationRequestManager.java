@@ -17,8 +17,7 @@ public class LocationRequestManager {
     private  LocationRequest locationRequest;
     private  final int INTERVAL = 10000;
     private  final int FASTEST_INTERVAL = 5000;
-    private  final int LOCATION_REQUEST_TYPE =
-                LocationRequest.PRIORITY_HIGH_ACCURACY;
+    private  final int LOCATION_REQUEST_TYPE = LocationRequest.PRIORITY_HIGH_ACCURACY;
     private  final String LOG_TAG = "LocationRequestManager";
 
     public LocationRequestManager(){
