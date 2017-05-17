@@ -9,9 +9,9 @@ public class CommonRouteInfo {
 
     protected LatLng endLocation;
     protected LatLng startLocation;
-    protected int intDistance;
+    protected double distanceKm;
     protected String strDistance;
-    protected int intDuration;
+    protected double durationMin;
     protected String strDuration;
 
     protected void setCommonRouteInfo(JSONObject jsonObject) throws JSONException{
@@ -19,11 +19,11 @@ public class CommonRouteInfo {
 
         aux = jsonObject.getJSONObject("distance");
         strDistance = aux.getString("text");
-        intDistance = aux.getInt("value");
+        distanceKm = aux.getInt("value");
 
         aux = jsonObject.getJSONObject("duration");
         strDuration = aux.getString("text");
-        intDuration = aux.getInt("value");
+        durationMin = aux.getInt("value");
 
         aux = jsonObject.getJSONObject("start_location");
         startLocation = new LatLng(aux.getDouble("lat"), aux.getDouble("lng"));
@@ -48,12 +48,12 @@ public class CommonRouteInfo {
         this.startLocation = startLocation;
     }
 
-    public int getIntDistance() {
-        return intDistance;
+    public double getDistanceKm() {
+        return distanceKm;
     }
 
-    public void setIntDistance(int intDistance) {
-        this.intDistance = intDistance;
+    public void setDistanceKm(double distanceKm) {
+        this.distanceKm = distanceKm;
     }
 
     public String getStrDistance() {
@@ -64,12 +64,12 @@ public class CommonRouteInfo {
         this.strDistance = strDistance;
     }
 
-    public int getIntDuration() {
-        return intDuration;
+    public double getDurationMin() {
+        return durationMin;
     }
 
-    public void setIntDuration(int intDuration) {
-        this.intDuration = intDuration;
+    public void setDurationMin(double durationMin) {
+        this.durationMin = durationMin;
     }
 
     public String getStrDuration() {
@@ -85,9 +85,9 @@ public class CommonRouteInfo {
         return "CommonRouteInfo{" +
                 "endLocation=" + endLocation +
                 ", startLocation=" + startLocation +
-                ", intDistance=" + intDistance +
+                ", intDistance=" + distanceKm +
                 ", strDistance='" + strDistance + '\'' +
-                ", intDuration=" + intDuration +
+                ", intDuration=" + durationMin +
                 ", strDuration='" + strDuration + '\'' +
                 '}';
     }

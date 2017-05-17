@@ -70,6 +70,14 @@ public class DirectionsApiResponse {
         return polylineOptions;
     }
 
+    public String getPolylineRoute(){
+        return getRoutes().get(0).getPolyline();
+    }
+
+    public double getLegDistance(){
+        return getRoutes().get(0).getLegs().get(0).getDistanceKm();
+    }
+
     @Override
     public String toString() {
         return "DirectionsApiResponse{" +

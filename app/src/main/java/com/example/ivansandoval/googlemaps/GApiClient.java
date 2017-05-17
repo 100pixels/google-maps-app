@@ -56,6 +56,9 @@ public class GApiClient implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
+    public LocationRequest getLocationRequest(){
+        return locationRequest;
+    }
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {

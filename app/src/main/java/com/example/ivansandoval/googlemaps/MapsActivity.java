@@ -15,54 +15,58 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.example.ivansandoval.googlemaps.dialogs.NetworkStatusDialog;
+import com.example.ivansandoval.googlemaps.dialogs.NetworkStatusDialog.NetworkStatusDialogListener;
 import com.google.android.gms.awareness.snapshot.LocationResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 
-public class MapsActivity extends FragmentActivity implements NetworkStatusDialog.NetworkStatusDialogListener {
+public class MapsActivity extends FragmentActivity
+                                                                        implements NetworkStatusDialogListener,
+                                                                                                LocationListener{
 
-    private MyGoogleApiClient apiClient;
-    private LocationRequestManager locationRequestManager;
-    private MyGoogleMap map;
     private final String LOG_TAG = "MapsActivity";
-
-
 
     private final int REQUEST_ACCESS_FINE_LOCATION_PERMISSION= 10;
     private final int REQUEST_ACTION_SETTINGS=30;
     private final int REQUEST_CHECK_SETTINGS = 20;
 
+    // New attributes added
+    private Location lastLocation;
+    private GApiClient gApiClient;
+    private GoogleApiClient mGoogleApiClient;
+    private GMap gMap;
+    private int idViaje;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
 
-        locationRequestManager = new LocationRequestManager();
-        map=new MyGoogleMap(this);
-        apiClient=new MyGoogleApiClient(this);
+        idViaje = getIntent().getIntExtra("idViaje", 0);
 
-        /*
-        if( ! NetworkManager.isDeviceConnectedOrConnecting(this)){
-            showNetworkStatusDialog();
-        }
+        gMap = GMap.getInstance(this);
+        gMap.init(getSupportFragmentManager());
 
-        if( ! isAccessFineLocationPermissionGranted()){
-            requestAccessFineLocationPermission();
-        }
-        */
+        gApiClient = GApiClient.getInstance();
+        mGoogleApiClient = gApiClient.initApiClient(this, this);
 
         if(NetworkManager.isDeviceConnectedOrConnecting(this)){
             requestAccessFineLocationPermission();
@@ -71,18 +75,12 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
         }
     }
 
-    public void checkNetworkStatus(){}
-
-    public boolean isAccessFineLocationPermissionGranted(){return false;}
-
-    public void areLocationSettingsOn(){}
-
     private void checkLocationSettings(){
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(locationRequestManager.getLocationRequest());
+                .addLocationRequest(gApiClient.getLocationRequest());
 
         PendingResult<LocationSettingsResult> result =
-                LocationServices.SettingsApi.checkLocationSettings(apiClient.getClient(),
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
                         builder.build());
 
         result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
@@ -94,9 +92,8 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
                 switch (statusCode) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         Log.i(LOG_TAG, "Configuración correcta, es posible hacer la solicitud");
-                        initGoogleMap();
-                        startLocationUpdates();
-                        map.drawPublicTransitRoute();
+                        //gMap.drawPublicTransitRoute(idViaje);
+                        drawRoute();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         try {
@@ -104,7 +101,6 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
                             // Despliega el cuadro de dialogo para activar el servicio de ubicación
                             status.startResolutionForResult( MapsActivity.this, REQUEST_CHECK_SETTINGS);
                         } catch (IntentSender.SendIntentException e) {
-                            //btnActualizar.setChecked(false);
                             Log.i(LOG_TAG, "Error al intentar solucionar configuración de ubicación");
                         }
                         break;
@@ -117,20 +113,20 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
         });
     }
 
+    private void drawRoute(){
+        if(idViaje == 0){
+            gMap.drawAllPublicTransitRoute();
+        }else{
+            gMap.drawPublicTransitRoute(idViaje);
+        }
+    }
+
     private void exitApplication(){
         this.finish();
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
-    }
-
-
-    private void initGoogleMap(){
-        setContentView(R.layout.activity_maps);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(map);
     }
 
     private void launchActionSettingsIntent(){
@@ -143,9 +139,8 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
         switch(requestCode){
             case REQUEST_CHECK_SETTINGS:
                 if(resultCode == Activity.RESULT_OK){
-                    initGoogleMap();
-                    startLocationUpdates();
-                    map.drawPublicTransitRoute();
+                    //gMap.drawPublicTransitRoute(idViaje);
+                    drawRoute();
                 }else{
                     exitApplication();
                 }
@@ -168,22 +163,19 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
 
     @Override
     protected void onStart() {
-        apiClient.getClient().connect();
         super.onStart();
+        if(mGoogleApiClient != null){
+            mGoogleApiClient.connect();
+        }
     }
 
     @Override
     protected void onStop() {
-        apiClient.getClient().disconnect();
         super.onStop();
+        if(mGoogleApiClient != null){
+            mGoogleApiClient .disconnect();
+        }
     }
-
-
-    /*
-    * Este método es llamado de manera implícita después de haber solicitado un permiso
-    * en tiempo de ejecución. Los parámetros que recibe permiten identificar la petición hecha,
-     * así como también, la respuesta del usuario a la solicitud.
-    * */
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -204,16 +196,8 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
         Log.d(LOG_TAG,"on requestAccessFineLocationPermission()");
         if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED){
-            /* Cuando la aplicación se ejecuta sobre una versión de android inferior a 6.0,
-                el permiso ACCESS_FINE_LOCATION ya ha sido otorgado.
-             */
             checkLocationSettings();
         } else{
-            /*
-            Si el permiso ACCESS_FINE_LOCATION no ha sido otorgado significa que la app se
-            ejecuta sobre Android 6.0 (API 23) o superior. Es necesario solicitar este permiso al usuario
-            en tiempo de ejecución
-            */
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_ACCESS_FINE_LOCATION_PERMISSION);
@@ -224,8 +208,30 @@ public class MapsActivity extends FragmentActivity implements NetworkStatusDialo
         new NetworkStatusDialog().show(getSupportFragmentManager(),"networkStatusDialog");
     }
 
-    private void startLocationUpdates() {
-        locationRequestManager.requestLocationUpdates(this,apiClient.getClient(),map);
+    @Override
+    public void onLocationChanged(Location location) {
+        lastLocation = location;
+        Log.i(LOG_TAG, "lat= "+ lastLocation.getLatitude()+" , "+ "lng= "+ lastLocation.getLongitude());
     }
+
+    /*
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    */
+
+    /*
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        gMap.clear();
+        //this.finish();
+    }*/
 
 }
