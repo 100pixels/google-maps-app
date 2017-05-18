@@ -1,12 +1,10 @@
-package com.example.ivansandoval.googlemaps;
+package org.cenidet.cc.publictransit.volley;
 
 
 import android.content.Context;
-import android.view.PixelCopy;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.Volley;
 
 public class VolleyQueue {
