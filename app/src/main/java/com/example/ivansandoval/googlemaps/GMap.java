@@ -36,21 +36,15 @@ public class GMap implements OnMapReadyCallback {
 
     private static GMap gMap;
     private GoogleMap googleMap;
-    //private PolylineOptions polylineOptions;
     private CopyOnWriteArrayList<Polyline> polylines;
-    //private ArrayList<LatLng> routePoints;
     private RequestQueue volleyQueue;
-    //private VolleyQueue volleyQueue;
     private Gson gson;
     private final String LOG_TAG = "MyGoogleMap";
 
     private int idViaje;
 
     private GMap(Context context){
-        //polylineOptions = new PolylineOptions();
         polylines = new CopyOnWriteArrayList<Polyline>();
-        //routePoints = new ArrayList<LatLng>();
-        //queue = Volley.newRequestQueue(context);
         volleyQueue = VolleyQueue.getInstance(context).getRequestQueue();
         gson = new Gson();
     }
@@ -67,26 +61,18 @@ public class GMap implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
     }
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
+    public void addMarker(Stop stop){
+        googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(stop.getLatitude(), stop.getLongitude()))
+                .title(stop.getStopId()+".- "+ stop.getLatitude()+" , "+ stop.getLongitude()))
+                .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.bus_stop));
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         this.googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.911301,  -99.181239), 14));
-/*
-        // Add a marker in Sydney and move the camera
-        LatLng home = new LatLng(18.867056, -99.185562);
-        googleMap.addMarker(new MarkerOptions().position(home).title("Marker at home"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(home));
-        */
     }
 
     public void drawPublicTransitRoute(int idViaje){
@@ -173,12 +159,6 @@ public class GMap implements OnMapReadyCallback {
     }
     ///*
 
-    private void removePolylines(){
-        for(Polyline polyline: polylines){
-            polyline.remove();
-            polylines.remove(polyline);
-        }
-    }
     //*/
 
     private void drawRouteBetweenTwoStops(Stop stop1, Stop stop2){
@@ -203,11 +183,6 @@ public class GMap implements OnMapReadyCallback {
         volleyQueue.add(customVolleyRequest);
     }
 
-    public void addMarker(Stop stop){
-        googleMap.addMarker(new MarkerOptions()
-                .position(new LatLng(stop.getLatitude(), stop.getLongitude()))
-                .title(stop.getStopId()+".- "+ stop.getLatitude()+" , "+ stop.getLongitude()))
-                .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.bus_stop));
-    }
+
 
 }
