@@ -22,20 +22,21 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.cenidet.cc.publictransit.volley.VolleyQueue;
+import org.cenidet.cc.publictransit.volley.request.CustomVolleyRequest;
+import org.cenidet.cc.publictransit.volley.response.GoogleMapsResponse;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import cenidet.cc.publictransit.dto.Stop;
-import cenidet.cc.publictransit.ws.DirectionsApiResponse;
 
 
 public class GMap implements OnMapReadyCallback {
 
     private static GMap gMap;
     private GoogleMap googleMap;
-    private PolylineOptions polylineOptions;
+    //private PolylineOptions polylineOptions;
     private CopyOnWriteArrayList<Polyline> polylines;
     //private ArrayList<LatLng> routePoints;
     private RequestQueue volleyQueue;
@@ -46,7 +47,7 @@ public class GMap implements OnMapReadyCallback {
     private int idViaje;
 
     private GMap(Context context){
-        polylineOptions = new PolylineOptions();
+        //polylineOptions = new PolylineOptions();
         polylines = new CopyOnWriteArrayList<Polyline>();
         //routePoints = new ArrayList<LatLng>();
         //queue = Volley.newRequestQueue(context);
@@ -91,7 +92,7 @@ public class GMap implements OnMapReadyCallback {
     public void drawPublicTransitRoute(int idViaje){
         //10.175.121.113
         this.idViaje = idViaje;
-        String url = "http://10.0.0.6:8085/PublicTransitWS/publictransit/getStopsByJourneyId/"+idViaje;
+        String url = "http://10.0.0.6:8085/PublicTransitWS/db/paradas/paradasByIdViaje/"+idViaje;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>(){
             @Override
@@ -183,31 +184,23 @@ public class GMap implements OnMapReadyCallback {
     private void drawRouteBetweenTwoStops(Stop stop1, Stop stop2){
 
         UrlRequest urlRequest = new UrlRequest(stop1, stop2);
+        //ArrayList<LatLng> puntos;
 
-        //FetchUrl fetchUrl = new FetchUrl(map);
-        //fetchUrl.execute(urlRequest.toString());
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, urlRequest.toString(), new Response.Listener<String>(){
+        CustomVolleyRequest customVolleyRequest = new CustomVolleyRequest(urlRequest.toString(), GoogleMapsResponse.class, null, new Response.Listener() {
             @Override
-            public void onResponse(String response){
-                DirectionsApiResponse apiResponse = new DirectionsApiResponse(response);
+            public void onResponse(Object response) {
+                GoogleMapsResponse mapsResponse = (GoogleMapsResponse)response;
+                PolylineOptions polylineOptions = mapsResponse.getPolylineOptions();
+                googleMap.addPolyline(polylineOptions);
 
-                Log.i(LOG_TAG, "polilinea: " + apiResponse.getPolylineRoute());
-                Log.i(LOG_TAG, "distancia: "+ apiResponse.getLegDistance());
-                googleMap.addPolyline(apiResponse.getPolyline());
-                //Log.i(LOG_TAG, apiResponse.toString());
-                //new JsonResponseParser(map).execute(response);
+                //Log.i("GoogleMapsResponse",mapsResponse.toString());
             }
-        }, new Response.ErrorListener(){
+        }, new Response.ErrorListener() {
             @Override
-            public void onErrorResponse(VolleyError error){
-                if(error != null){
-                    Log.e(LOG_TAG, error.toString());
-                }
-
+            public void onErrorResponse(VolleyError error) {
             }
         });
-        volleyQueue.add(stringRequest);
+        volleyQueue.add(customVolleyRequest);
     }
 
     public void addMarker(Stop stop){

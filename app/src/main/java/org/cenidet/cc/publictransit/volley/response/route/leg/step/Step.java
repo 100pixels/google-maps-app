@@ -1,10 +1,8 @@
 package org.cenidet.cc.publictransit.volley.response.route.leg.step;
 
 
-import app.itz.org.customvolleyrequest.response.route.Distance;
-import app.itz.org.customvolleyrequest.response.route.Duration;
-import app.itz.org.customvolleyrequest.response.route.Location;
-import app.itz.org.customvolleyrequest.response.route.OverviewPolyline;
+import org.cenidet.cc.publictransit.volley.response.route.*;
+import org.cenidet.cc.publictransit.volley.response.route.leg.step.Step;
 
 public class Step {
 

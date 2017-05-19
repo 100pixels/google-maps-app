@@ -1,9 +1,16 @@
 package org.cenidet.cc.publictransit.volley.response;
 
+import android.graphics.Color;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.PolylineOptions;
+
 import org.cenidet.cc.publictransit.volley.response.route.Route;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
+import cenidet.cc.publictransit.ws.DataParser;
 
 
 public class GoogleMapsResponse {
@@ -11,6 +18,8 @@ public class GoogleMapsResponse {
     private GeocodedWaypoint[] geocoded_waypoints;
     private Route[] routes;
     private String status;
+
+    private PolylineOptions polylineOptions;
 
     public GeocodedWaypoint[] getGeocoded_waypoints() {
         return geocoded_waypoints;
@@ -36,6 +45,31 @@ public class GoogleMapsResponse {
         this.status = status;
     }
 
+    public String getPolyline(){
+        String polyline="";
+        if(routes != null && routes.length >= 1){
+                polyline = routes[0].getOverview_polyline().getPoints();
+        }
+        return polyline;
+    }
+
+    public ArrayList<LatLng> getLanLngPoints(){
+        String polyline = getPolyline();
+        ArrayList<LatLng> latLngPoints = DataParser.decodePolyline(polyline);
+        return latLngPoints;
+    }
+
+    public PolylineOptions getPolylineOptions(){
+        polylineOptions = new PolylineOptions();
+        polylineOptions.color(Color.MAGENTA);
+        polylineOptions.addAll(getLanLngPoints());
+        return this.polylineOptions;
+    }
+
+    private void initPolylineOptions(){
+
+    }
+
     @Override
     public String toString() {
         return "GoogleMapsResponse{" +
@@ -44,4 +78,5 @@ public class GoogleMapsResponse {
                 ", status='" + status + '\'' +
                 '}';
     }
+
 }

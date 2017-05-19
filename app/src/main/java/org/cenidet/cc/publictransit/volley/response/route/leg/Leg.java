@@ -2,14 +2,9 @@ package org.cenidet.cc.publictransit.volley.response.route.leg;
 
 import java.util.Arrays;
 
-import app.itz.org.customvolleyrequest.response.route.Distance;
-import app.itz.org.customvolleyrequest.response.route.Duration;
-import app.itz.org.customvolleyrequest.response.route.Location;
-import app.itz.org.customvolleyrequest.response.route.leg.step.Step;
+import org.cenidet.cc.publictransit.volley.response.route.*;
+import org.cenidet.cc.publictransit.volley.response.route.leg.step.Step;
 
-/**
- * Created by Ivan Sandoval on 17/05/2017.
- */
 
 public class Leg {
 
