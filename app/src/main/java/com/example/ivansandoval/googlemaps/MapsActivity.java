@@ -1,6 +1,5 @@
 package com.example.ivansandoval.googlemaps;
 
-import android.*;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
@@ -15,12 +14,10 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.widget.Toast;
 
 import com.example.ivansandoval.googlemaps.dialogs.NetworkStatusDialog;
 import com.example.ivansandoval.googlemaps.dialogs.NetworkStatusDialog.NetworkStatusDialogListener;
-import com.google.android.gms.awareness.snapshot.LocationResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
@@ -30,11 +27,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
+
+import org.cenidet.cc.publictransit.classes.map.GMap;
 
 
 public class MapsActivity extends FragmentActivity

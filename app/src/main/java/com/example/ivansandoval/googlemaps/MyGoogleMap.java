@@ -123,7 +123,7 @@ public class MyGoogleMap {
     public void drawMarker(Stop stop){
         map.addMarker(new MarkerOptions()
                 .position(new LatLng(stop.getLatitude(), stop.getLongitude()))
-                .title(stop.getStopId()+".- "+ stop.getLatitude()+" , "+ stop.getLongitude()));
+                .title(stop.getId()+".- "+ stop.getLatitude()+" , "+ stop.getLongitude()));
     }
 
 

@@ -1,6 +1,7 @@
-package com.example.ivansandoval.googlemaps;
+package org.cenidet.cc.publictransit.classes.map;
 
 import android.content.Context;
+import android.graphics.Camera;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
@@ -9,12 +10,17 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.example.ivansandoval.googlemaps.R;
+import com.example.ivansandoval.googlemaps.UrlRequest;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -61,18 +67,52 @@ public class GMap implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
     }
 
+    public void init(MapView mapView){
+        mapView.getMapAsync(this);
+    }
+
     public void addMarker(Stop stop){
         googleMap.addMarker(new MarkerOptions()
                 .position(new LatLng(stop.getLatitude(), stop.getLongitude()))
-                .title(stop.getStopId()+".- "+ stop.getLatitude()+" , "+ stop.getLongitude()))
+                .title(stop.getId()+".- "+ stop.getLatitude()+" , "+ stop.getLongitude()))
                 .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.bus_stop));
+    }
+
+    public void clear(){
+        googleMap.clear();
+    }
+
+    public void addMarker(LatLng location/*, String description*/){
+        googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(location.latitude, location.longitude)))
+                //.title(description))
+                .setIcon(BitmapDescriptorFactory.fromResource(R.drawable.bus_stop));
+    }
+
+    public void addMarker(LatLng location, float color){
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(new LatLng(location.latitude, location.longitude));
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(color));
+
+        googleMap.addMarker(markerOptions);
+    }
+
+    public void setCameraBounds(LatLng southwest, LatLng northwest){
+        LatLngBounds.Builder builder = new LatLngBounds.Builder();
+        builder.include(southwest);
+        builder.include(northwest);
+        LatLngBounds bounds = builder.build();
+        int padding = 100;
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+        googleMap.animateCamera(cameraUpdate);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
         this.googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        this.googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.911301,  -99.181239), 14));
+        this.googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(18.911301,  -99.181239), ZOOM.STREET_LEVEL));
     }
 
     public void drawPublicTransitRoute(int idViaje){
@@ -183,6 +223,12 @@ public class GMap implements OnMapReadyCallback {
         volleyQueue.add(customVolleyRequest);
     }
 
-
+    public static class ZOOM{
+        public static final int WORLD_LEVEL = 1;
+        public static final int CONTINENT_LEVEL = 5;
+        public static final int CITY_LEVEL = 10;
+        public static final int STREET_LEVEL = 15;
+        public static final int BUILDING_LEVEL = 20;
+    }
 
 }

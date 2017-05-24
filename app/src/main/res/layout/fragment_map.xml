@@ -6,29 +6,42 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:id="@+id/spinner" />
-
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/spinner"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="13dp"
-        android:id="@+id/spinner2" />
-
     <com.google.android.gms.maps.MapView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/spinner2"
+        android:layout_below="@+id/spinnerDestino"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_marginTop="12dp"
         android:id="@+id/mapView" />
+
+    <Spinner
+        android:layout_width="100px"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerOrigen"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp"
+        android:layout_toLeftOf="@+id/btnOk"
+        android:layout_toStartOf="@+id/btnOk" />
+
+    <Spinner
+        android:layout_width="100px"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinnerDestino"
+        android:layout_below="@+id/spinnerOrigen"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/btnOk"
+        android:layout_toStartOf="@+id/btnOk" />
+
+    <Button
+        android:text="OK"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnOk"
+        android:layout_above="@+id/mapView"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>
