@@ -31,6 +31,7 @@ import org.cenidet.cc.publictransit.classes.map.GMap;
 import org.cenidet.cc.publictransit.classes.map.Location;
 import org.cenidet.cc.publictransit.distancematrix.request.request.DistanceMatrixRequest;
 import org.cenidet.cc.publictransit.distancematrix.request.response.Distance;
+import org.cenidet.cc.publictransit.distancematrix.request.response.DistanceMatrixObject;
 import org.cenidet.cc.publictransit.distancematrix.request.response.DistanceMatrixResponse;
 import org.cenidet.cc.publictransit.graph.Grafo;
 import org.cenidet.cc.publictransit.volley.VolleyQueue;
@@ -268,7 +269,7 @@ public class MapFragment extends Fragment{
                         try{
                             grafo = new Grafo(verticesGrafo);
                         }catch(Exception e){
-                            Toast.makeText(getActivity(), "Error al inicializar el grafo", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Error: "+ e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 },
@@ -276,22 +277,29 @@ public class MapFragment extends Fragment{
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Toast.makeText(getActivity(), "Error al inicializar el grafo...", Toast.LENGTH_SHORT).show();
+                        Log.i(LOG_TAG, volleyError.toString());
                     }
                 });
         requestQueue.add(request);
     }
 
-    private void encontrarParadaMasCercanaA(LatLng location){
+    private void encontrarParadaMasCercanaA(final LatLng location){
         String url = DistanceMatrixRequest.getUrl(location, grafo.getListaDeVertices());
 
         CustomVolleyRequest customVolleyRequest = new CustomVolleyRequest(url, DistanceMatrixResponse.class, null, new Response.Listener() {
             @Override
             public void onResponse(Object response) {
                 DistanceMatrixResponse distancematrix = (DistanceMatrixResponse)response;
-                ArrayList<Distance>  distances = distancematrix.getDistanceList();
-                for(Distance d: distances){
-                    Log.i(LOG_TAG, "value: "+d.getValue());
+                DistanceMatrixObject object = distancematrix.getNearestLocationFrom(location);
+                Log.i(LOG_TAG, object.toString());
+
+
+                /*
+                ArrayList<DistanceMatrixObject>  objects = distancematrix.convertResponseToDistanceMatrixObjects();
+                for(DistanceMatrixObject object: objects){
+                    Log.i(LOG_TAG, object.toString());
                 }
+                //*/
 
             }
         }, new Response.ErrorListener() {

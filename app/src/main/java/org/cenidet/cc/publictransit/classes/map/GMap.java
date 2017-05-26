@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import cenidet.cc.publictransit.dto.Stop;
+import cenidet.cc.publictransit.ws.DataParser;
 
 
 public class GMap implements OnMapReadyCallback {
@@ -134,7 +135,7 @@ public class GMap implements OnMapReadyCallback {
                 if(error == null){
                     Log.i(LOG_TAG, "Ocurrio un problema con la red");
                 }else{
-                    Log.i(LOG_TAG, "Error en la peticion HTTP ");
+                    Log.i(LOG_TAG, "Error en la peticion HTTP: "+ error.getMessage());
                 }
 
             }
@@ -213,11 +214,12 @@ public class GMap implements OnMapReadyCallback {
                 PolylineOptions polylineOptions = mapsResponse.getPolylineOptions();
                 googleMap.addPolyline(polylineOptions);
 
-                //Log.i("GoogleMapsResponse",mapsResponse.toString());
+                Log.i("GoogleMapsResponse",mapsResponse.toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.i("GoogleMapsResponse", "An erros has occured while making the request");
             }
         });
         volleyQueue.add(customVolleyRequest);

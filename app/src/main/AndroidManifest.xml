@@ -20,7 +20,15 @@
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_demo_maps"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            </activity>
         <activity
             android:name=".MarkerAndPolyline"
             android:label="@string/title_activity_marker_and_polyline"

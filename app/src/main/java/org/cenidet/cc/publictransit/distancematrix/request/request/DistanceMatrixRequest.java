@@ -9,6 +9,7 @@ import cenidet.cc.publictransit.dto.Stop;
 public class DistanceMatrixRequest {
 
     private static String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=";
+    private static String mode = "&mode=walking";
 
     public static String getUrl(LatLng location, ArrayList<Stop>stops){
         String origins = location.latitude +","+location.longitude;
@@ -21,7 +22,7 @@ public class DistanceMatrixRequest {
                 destinations+= "|";
             }
         }
-        return url+ origins+destinations;
+        return url+ origins+destinations+mode;
     }
 
 

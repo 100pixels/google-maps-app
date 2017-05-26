@@ -31,6 +31,10 @@ public class Element {
         this.status = status;
     }
 
+    public double getDistanceValue(){
+        return distance.getValue();
+    }
+
     @Override
     public String toString() {
         return "Element{" +
